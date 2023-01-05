@@ -1,11 +1,19 @@
 #!/bin/bash
 
+PROJECT_NAME=docker-app-PDF-Annotation-Extractor
+
 # -------------------
 # 檢查有沒有參數
 
-if [ ! -f "$1" ]; then
-  echo "$1 does not exist."
-  exit
+var="$1"
+useParams="true"
+WORK_DIR=`pwd`
+if [ ! -f "$var" ]; then
+  # echo "$1 does not exist."
+  # exit
+  var=$(kdialog --getopenfilename --multiple ~/ 'application/pdf')
+  var=`echo "${var}" | xargs`
+  useParams="false"
 fi
 
 # ------------------
@@ -35,7 +43,6 @@ fi
 # ---------------
 # 安裝或更新專案
 
-PROJECT_NAME=docker-app-PDF-Annotation-Extractor
 
 if [ -d "/tmp/${PROJECT_NAME}" ];
 then
@@ -50,13 +57,35 @@ else
 fi
 
 # -----------------
+# 確認看看要不要做docker-compose build
+
+mkdir -p "/tmp/${PROJECT_NAME}.cache"
+
+cmp --silent "/tmp/${PROJECT_NAME}/Dockerfile" "/tmp/${PROJECT_NAME}.cache/Dockerfile" && cmp --silent "/tmp/${PROJECT_NAME}/package.json" "/tmp/${PROJECT_NAME}.cache/package.json" || docker-compose build
+
+cp "/tmp/${PROJECT_NAME}/Dockerfile" "/tmp/${PROJECT_NAME}.cache/"
+cp "/tmp/${PROJECT_NAME}/package.json" "/tmp/${PROJECT_NAME}.cache/"
+
+# -----------------
 # 執行指令
 
-for var in "$@"
-do
+if [ "${useParams}" == "true" ]; then
+  # echo "use parameters"
+  for var in "$@"
+  do
+    cd "${WORK_DIR}"
+    var=`realpath "${var}"`
+    # echo "${var}"
+    cd "/tmp/${PROJECT_NAME}"
+    node "/tmp/${PROJECT_NAME}/index.js" "${var}"
+  done
+else
   if [ ! -f "${var}" ]; then
-    echo "$1 does not exist."
-    continue
+    echo "$var does not exist."
+    exit
   fi
   node "/tmp/${PROJECT_NAME}/index.js" "${var}"
-done
+fi
+
+
+
