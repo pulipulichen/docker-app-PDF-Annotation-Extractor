@@ -20,15 +20,15 @@ module.exports = async function (inputFile) {
     let outputInPage = []
     annotations.forEach(annotation => {
       // console.log(annotation.length)
-      // console.log(annotation)
+      console.log(annotation)
 
       if (annotation.type !== '/FreeText') {
         // console.log(annotation)
         return false
       }
 
-      let y = annotation.rect[0]
-      let x = annotation.rect[1]
+      let x = annotation.rect[0]
+      let y = annotation.rect[1]
 
       let contents = annotation.contents.trim()
       // console.log(contents)
