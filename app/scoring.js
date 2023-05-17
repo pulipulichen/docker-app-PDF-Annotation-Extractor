@@ -57,6 +57,10 @@ let scoring = function (annotations) {
         students[id] = {}
       }
 
+      if (students[id][q]) {
+        throw Error(`overwrite!! ${id} : q${q}`)
+      }
+
       students[id][q] = score
 
       if (qArray.indexOf(q) === -1) {
@@ -79,6 +83,8 @@ let scoring = function (annotations) {
   ]
 
   console.log(idArray)
+  let scoreArray = {}
+  let qList = []
 
   for (let i = 0; i < idArray.length; i++) {
     let id = idArray[i]
@@ -99,6 +105,12 @@ let scoring = function (annotations) {
 
       scores.push(score)
       total = total + score
+
+      if (!scoreArray[q]) {
+        scoreArray[q] = []
+        qList.push(q)
+      }
+      scoreArray[q].push(score)
     }
 
     line = line.concat(scores)
@@ -114,8 +126,41 @@ let scoring = function (annotations) {
 
     output.push(line.join(','))
   }
-  console.log(output.join('\n'))
 
+  // -------------------
+
+  qList = qList.sort()
+  const average = arr => arr.reduce( ( p, c ) => p + c, 0 ) / arr.length;
+
+  let scoreArrayAvg = []
+  let scoreArrayMax = []
+  let scoreArrayPercent = []
+  for (let i = 0; i < qList.length; i++) {
+    let q = qList[i]
+
+    let scoreList = scoreArray[q]
+    let avg = average(scoreList)
+    avg = Math.round(avg * 10) / 10
+    scoreArrayAvg.push(avg)
+
+    let max = Math.max(...scoreList)
+    scoreArrayMax.push(max)
+    
+    let percent = Math.round((avg / max) * 100)
+    scoreArrayPercent.push(percent)
+  }
+
+  output.push(['average'].concat(scoreArrayAvg).join(','))
+  output.push(['max'].concat(scoreArrayMax).join(','))
+  output.push(['percent'].concat(scoreArrayPercent).join(','))
+
+  // -------------------
+
+  output.push(`participants,${idArray.length}`)
+
+  // -------------------
+
+  console.log(output.join('\n'))
   return output.join('\n')
 }
 

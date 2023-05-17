@@ -20,7 +20,7 @@ module.exports = async function (inputFile) {
     let outputInPage = []
     annotations.forEach(annotation => {
       // console.log(annotation.length)
-      console.log(annotation)
+      // console.log(annotation)
 
       if (annotation.type !== '/FreeText') {
         // console.log(annotation)
@@ -53,7 +53,7 @@ module.exports = async function (inputFile) {
       }
     })
 
-    console.log(outputInPage)
+    // console.log(outputInPage)
 
     // outputInPage.sort((a, b) => {
     //   let a1 = a.trim().slice(0, 1)
