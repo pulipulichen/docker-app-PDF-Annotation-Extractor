@@ -40,7 +40,7 @@ module.exports = async function (inputFile) {
       })
     })
 
-    console.log(outputInPage)
+    
     outputInPage = outputInPage.sort((a, b) => {
       if (a.y !== b.y) {
         return a.y - b.y
@@ -52,6 +52,8 @@ module.exports = async function (inputFile) {
         return (a.contents > b.contents)
       }
     })
+
+    console.log(outputInPage)
 
     // outputInPage.sort((a, b) => {
     //   let a1 = a.trim().slice(0, 1)
