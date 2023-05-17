@@ -31,18 +31,19 @@ module.exports = async function (inputFile) {
       outputInPage.push(contents)
     })
 
-    outputInPage.sort((a, b) => {
-      let a1 = a.trim().slice(0, 1)
-      let b1 = b.trim().slice(0, 1)
-      if (a1 === '|') {
-        return false
-      }
-      else if (b1 === '|') {
-        return true
-      }
+    // outputInPage.sort((a, b) => {
+    //   let a1 = a.trim().slice(0, 1)
+    //   let b1 = b.trim().slice(0, 1)
+    //   if (a1 === '|') {
+    //     return false
+    //   }
+    //   else if (b1 === '|') {
+    //     return true
+    //   }
 
-      return (a > b)
-    })
+    //   return (a > b)
+    // })
+    outputInPage.sort()
 
     output = output.concat(outputInPage)
   })
