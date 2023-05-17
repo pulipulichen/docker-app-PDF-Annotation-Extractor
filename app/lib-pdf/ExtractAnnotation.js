@@ -63,9 +63,9 @@ module.exports = async function (inputFile) {
 
     //   return (a > b)
     // })
-    outputInPage.sort()
-
-    output = output.concat(outputInPage)
+    // outputInPage.sort()
+    
+    output = output.concat(outputInPage.map(o => o.contents))
   })
 
   return output
