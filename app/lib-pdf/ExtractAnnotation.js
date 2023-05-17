@@ -35,10 +35,10 @@ module.exports = async function (inputFile) {
       let a1 = a.trim().slice(0, 1)
       let b1 = b.trim().slice(0, 1)
       if (a1 === '|') {
-        return true
+        return false
       }
       else if (b1 === '|') {
-        return false
+        return true
       }
 
       return (a > b)
