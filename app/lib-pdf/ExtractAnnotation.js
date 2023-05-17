@@ -27,8 +27,8 @@ module.exports = async function (inputFile) {
         return false
       }
 
-      let x = annotation.rect[0]
-      let y = annotation.rect[1]
+      let x = annotation.rect[2]
+      let y = annotation.rect[3]
 
       let contents = annotation.contents.trim()
       // console.log(contents)
