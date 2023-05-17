@@ -16,6 +16,8 @@ module.exports = async function (inputFile) {
   // console.log()
   pages.forEach((annotations, page_number) => {
     console.log('Page', page_number)
+
+    let outputInPage = []
     annotations.forEach(annotation => {
       // console.log(annotation.length)
       if (annotation.type !== '/FreeText') {
@@ -26,8 +28,23 @@ module.exports = async function (inputFile) {
       let contents = annotation.contents.trim()
       // console.log(contents)
 
-      output.push(contents)
+      outputInPage.push(contents)
     })
+
+    outputInPage.sort((a, b) => {
+      let a1 = a.trim().slice(0, 1)
+      let b1 = b.trim().slice(0, 1)
+      if (a1 === '|') {
+        return true
+      }
+      else if (b1 === '|') {
+        return false
+      }
+
+      return (a > b)
+    })
+
+    output = output.concat(outputInPage)
   })
 
   return output
