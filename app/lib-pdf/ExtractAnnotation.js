@@ -41,7 +41,7 @@ module.exports = async function (inputFile) {
     })
 
     console.log(outputInPage)
-    outputInPage.sort((a, b) => {
+    outputInPage = outputInPage.sort((a, b) => {
       if (a.y !== b.y) {
         return a.y < b.y
       }
