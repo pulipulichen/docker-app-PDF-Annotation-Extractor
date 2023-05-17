@@ -43,7 +43,7 @@ module.exports = async function (inputFile) {
     
     outputInPage = outputInPage.sort((a, b) => {
       if (a.y !== b.y) {
-        return b.y - b.y
+        return b.y - a.y
       }
       else if (a.x !== b.x) {
         return a.x - b.x
