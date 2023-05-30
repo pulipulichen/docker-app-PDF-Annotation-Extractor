@@ -79,7 +79,7 @@ let scoring = function (annotations) {
   idArray.sort()
 
   let output = [
-    ['id'].concat(qArray).concat(['total', 'adj_total']).join(',')
+    ['id'].concat(['total', 'adj_total']).concat(qArray).join(',')
   ]
 
   console.log(idArray)
@@ -113,16 +113,22 @@ let scoring = function (annotations) {
       scoreArray[q].push(score)
     }
 
-    line = line.concat(scores)
+    // line = line.concat(scores)
+    // line = []
     line.push(total)
 
-    if (total > 100) {
-      line.push(100)
+    let adjTotal = total
+    if (adjTotal > 100) {
+      // line.push(100)
+      adjTotal = 100
     }
-    else {
-      line.push(total)
-    }
-    
+    // else {
+    //   line.push(total)
+    // }
+    line.push(adjTotal)
+    line.push(parseInt(Math.sqrt(adjTotal)*10))
+
+    line = line.concat(scores)
 
     output.push(line.join(','))
   }
@@ -138,6 +144,7 @@ let scoring = function (annotations) {
   for (let i = 0; i < qList.length; i++) {
     let q = qList[i]
 
+    // let scoreList = scoreArray[q]
     let scoreList = scoreArray[q]
     let avg = average(scoreList)
     avg = Math.round(avg * 10) / 10
@@ -150,9 +157,12 @@ let scoring = function (annotations) {
     scoreArrayPercent.push(percent)
   }
 
-  output.push(['average'].concat(scoreArrayAvg).join(','))
-  output.push(['max'].concat(scoreArrayMax).join(','))
-  output.push(['percent'].concat(scoreArrayPercent).join(','))
+  let prependArray = ['', '', '']
+
+  output.push('')
+  output.push(['average'].concat(prependArray).concat(scoreArrayAvg).join(','))
+  output.push(['max'].concat(prependArray).concat(scoreArrayMax).join(','))
+  output.push(['percent'].concat(prependArray).concat(scoreArrayPercent).join(','))
 
   // -------------------
 
