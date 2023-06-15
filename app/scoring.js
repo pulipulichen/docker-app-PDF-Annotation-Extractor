@@ -79,7 +79,7 @@ let scoring = function (annotations) {
   idArray.sort()
 
   let output = [
-    ['id'].concat(['total', 'adj_total']).concat(qArray).join(',')
+    ['id'].concat(['total', 'adj_total', 'plus_adj_total']).concat(qArray).join(',')
   ]
 
   console.log(idArray)
