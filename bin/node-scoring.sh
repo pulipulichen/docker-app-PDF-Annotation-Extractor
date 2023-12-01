@@ -1,3 +1,9 @@
 #!/bin/sh
 
-node /home/pudding/NetBeansProjects/docker-app/docker-app-PDF-Annotation-Extractor/app/scoring.js "$1"
+# Get the directory path of the script
+script_dir=$(dirname "$0")
+
+# Change the current working directory to the script's location
+cd "$script_dir"
+
+node ../app/scoring.js "$1"

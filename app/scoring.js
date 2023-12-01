@@ -36,12 +36,14 @@ let scoring = function (annotations) {
   let lines = annotations.trim().split('\n').map(line => line.trim()).filter(line => (line !== ''))
 
   let students = {}
+  let studentsComment = {}
 
   let id = null
   let qArray = []
 
   for (let i = 0; i < lines.length; i++) {
     let line = lines[i].trim()
+    console.log(line)
 
     if (line.startsWith('|')) {
       line = line.slice(1).trim()
@@ -49,12 +51,19 @@ let scoring = function (annotations) {
       continue
     }
     else if (line.startsWith('q') && line.indexOf('.') > -1 && id !== null) {
-      let parts = line.slice(1).split('.').map(p => Number(p.trim()))
+      let parts = line.slice(1).split('.').map(p => {
+        p = p.trim()
+        if (p.indexOf(' ') > -1) {
+          p = p.slice(0, p.indexOf(' '))
+        }
+        return Number(p.trim())
+      })
       let q = parts[0]
       let score = parts[1]
 
       if (!students[id]) {
         students[id] = {}
+        studentsComment[id] = {}
       }
 
       if (students[id][q]) {
@@ -62,6 +71,7 @@ let scoring = function (annotations) {
       }
 
       students[id][q] = score
+      studentsComment[id][q] = line.trim()
 
       if (qArray.indexOf(q) === -1) {
         qArray.push(q)
@@ -79,13 +89,19 @@ let scoring = function (annotations) {
   idArray.sort()
 
   let output = [
-    ['id'].concat(['total', 'adj_total', 'plus_adj_total']).concat(qArray).join(',')
+    ['id'].concat(['total', 'adj_total', 'plus_adj_total']).concat(qArray).concat(['Comment']).join(',')
   ]
 
   console.log(idArray)
   let scoreArray = {}
+  // let commentArray = {}
   let qList = []
 
+  let totalList = []
+  let adjTotalList = []
+  let plusAdjTotalList = []
+
+  
   for (let i = 0; i < idArray.length; i++) {
     let id = idArray[i]
     console.log(id)
@@ -94,13 +110,15 @@ let scoring = function (annotations) {
     ]
 
     let scores = []
+    let comments = []
     let total = 0
 
     for (let j = 0; j < qArray.length; j++) {
       let q = qArray[j]
       let score = 0
-      if (students[id][q]) {
+      if (students[id][q] !== undefined){
         score = students[id][q]
+        comments.push(studentsComment[id][q])
       }
 
       scores.push(score)
@@ -116,6 +134,7 @@ let scoring = function (annotations) {
     // line = line.concat(scores)
     // line = []
     line.push(total)
+    totalList.push(total)
 
     let adjTotal = total
     if (adjTotal > 100) {
@@ -126,9 +145,15 @@ let scoring = function (annotations) {
     //   line.push(total)
     // }
     line.push(adjTotal)
-    line.push(parseInt(Math.sqrt(adjTotal)*10))
+    adjTotalList.push(adjTotal)
+
+    let plusAdjTotal = parseInt(Math.sqrt(adjTotal)*10)
+    line.push(plusAdjTotal)
+    plusAdjTotalList.push(plusAdjTotal)
 
     line = line.concat(scores)
+    line.push(comments.join(' / '))
+    // ----------------------------------------------------------------
 
     output.push(line.join(','))
   }
@@ -159,10 +184,35 @@ let scoring = function (annotations) {
 
   let prependArray = ['', '', '']
 
+  let avgTotalList = Math.round(average(totalList))
+  let avgAdjTotalList = Math.round(average(adjTotalList))
+  let avgPlusTotalList = Math.round(average(plusAdjTotalList))
+
+  let maxTotalList = Math.max(...totalList)
+  let maxAdjTotalList = Math.max(...adjTotalList)
+  let maxPlusTotalList = Math.max(...plusAdjTotalList)
+
+  let percentTotalList = Math.round((avgTotalList / maxTotalList) * 100)
+  let percentAdjTotalList = Math.round((avgAdjTotalList / maxAdjTotalList) * 100)
+  let percentPlusTotalList = Math.round((avgPlusTotalList / maxPlusTotalList) * 100)
+
+  
+
   output.push('')
-  output.push(['average'].concat(prependArray).concat(scoreArrayAvg).join(','))
-  output.push(['max'].concat(prependArray).concat(scoreArrayMax).join(','))
-  output.push(['percent'].concat(prependArray).concat(scoreArrayPercent).join(','))
+  output.push(['average'].concat([avgTotalList, avgAdjTotalList, avgPlusTotalList]).concat(scoreArrayAvg).join(','))
+  output.push(['max'].concat([maxTotalList, maxAdjTotalList, maxPlusTotalList]).concat(scoreArrayMax).join(','))
+  output.push(['percent'].concat([percentTotalList, percentAdjTotalList, percentPlusTotalList]).concat(scoreArrayPercent).join(','))
+
+  let passTotalCount = Math.round(totalList.filter(s => s >= 60).length / totalList.length * 100) 
+  let passAdjTotalCount = Math.round(adjTotalList.filter(s => s >= 60).length / adjTotalList.length * 100) 
+  let passPlusAdjTotaCount = Math.round(plusAdjTotalList.filter(s => s >= 60).length / plusAdjTotalList.length * 100) 
+
+  // let passTotalCount = totalList.filter(s => s >= 60).length
+  // let passAdjTotalCount = adjTotalList.filter(s => s >= 60).length
+  // let passPlusAdjTotaCount = plusAdjTotalList.filter(s => s >= 60).length
+
+  output.push('')
+  output.push(['pass'].concat([passTotalCount, passAdjTotalCount, passPlusAdjTotaCount]))
 
   // -------------------
 
